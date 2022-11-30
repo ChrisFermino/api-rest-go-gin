@@ -1,9 +1,7 @@
 package models
 
-import "gorm.io/gorm"
-
 type Aluno struct {
-    gorm.Model
+    ID   int    `json:"id"`
     Nome string `json:"nome"`
     Cpf  string `json:"cpf"`
     Rg   string `json:"rg"`

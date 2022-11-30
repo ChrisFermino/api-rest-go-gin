@@ -1,0 +1,211 @@
+basePath: /api
+definitions:
+  httputil.HTTPError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  models.Aluno:
+    properties:
+      cpf:
+        type: string
+      id:
+        type: integer
+      nome:
+        type: string
+      rg:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a REST API with gin Framework
+  title: API rest go-gin
+  version: "1.0"
+paths:
+  /alunos:
+    get:
+      consumes:
+      - application/json
+      description: Exibe todos os alunos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Aluno'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get All
+      tags:
+      - Alunos
+    post:
+      consumes:
+      - application/json
+      description: salva um aluno na tabela alunos
+      parameters:
+      - description: Modelo do aluno
+        in: body
+        name: aluno
+        required: true
+        schema:
+          $ref: '#/definitions/models.Aluno'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Aluno'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Save aluno
+      tags:
+      - Alunos
+  /alunos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: deleta um aluno no banco de dados
+      parameters:
+      - description: id aluno
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Aluno'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Delete aluno
+      tags:
+      - Alunos
+    get:
+      consumes:
+      - application/json
+      description: Busca um aluno por ID
+      parameters:
+      - description: Aluno ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Aluno'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get by ID
+      tags:
+      - Alunos
+    put:
+      consumes:
+      - application/json
+      description: edita um aluno na tabela alunos
+      parameters:
+      - description: Modelo do aluno
+        in: body
+        name: aluno
+        required: true
+        schema:
+          $ref: '#/definitions/models.Aluno'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Aluno'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Edit aluno
+      tags:
+      - Alunos
+  /alunos/search/{cpf}:
+    get:
+      consumes:
+      - application/json
+      description: get aluno por CPF
+      parameters:
+      - description: Aluno Cpf
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Aluno'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get by Cpf
+      tags:
+      - Alunos
+swagger: "2.0"
