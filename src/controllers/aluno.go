@@ -5,6 +5,7 @@ import (
 
     "api-go-gin/src/database"
     "api-go-gin/src/models"
+    "api-go-gin/src/services"
     "github.com/gin-gonic/gin"
 
     _ "api-go-gin/docs"
@@ -22,9 +23,7 @@ import (
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos [get]
 func ExibeTodosAlunos(context *gin.Context) {
-    var alunos []models.Aluno
-    database.DB.Find(&alunos)
-    context.JSON(200, alunos)
+    context.JSON(200, services.FindAll())
 }
 
 // FindById godoc
@@ -40,9 +39,7 @@ func ExibeTodosAlunos(context *gin.Context) {
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos/{id} [get]
 func FindById(context *gin.Context) {
-    var aluno models.Aluno
-    id := context.Params.ByName("id")
-    database.DB.First(&aluno, id)
+    aluno := services.FindById(context.Params.ByName("id"))
     if aluno.ID == 0 {
         context.JSON(http.StatusNotFound, gin.H{
             "Not Found": "aluno não encontrado"})
@@ -65,9 +62,7 @@ func FindById(context *gin.Context) {
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos/search/{cpf} [get]
 func FindByCpf(context *gin.Context) {
-    var aluno models.Aluno
-    cpf := context.Param("cpf")
-    database.DB.Where("cpf LIKE ?", "%"+cpf+"%").Find(&aluno)
+    aluno := services.FindByCpf(context.Params.ByName("cpf"))
     if aluno.ID == 0 {
         context.JSON(http.StatusNotFound, gin.H{
             "Not Found": "aluno não encontrado"})
@@ -89,11 +84,12 @@ func FindByCpf(context *gin.Context) {
 // @Router       /alunos [post]
 func SaveAluno(context *gin.Context) {
     var aluno models.Aluno
+    //services.SaveAluno()
     if err := context.ShouldBindJSON(&aluno); err != nil {
         context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
-    database.DB.Create(&aluno)
+    services.SaveAluno(aluno)
     context.JSON(http.StatusOK, aluno)
 }
 
