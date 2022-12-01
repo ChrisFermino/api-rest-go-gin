@@ -3,7 +3,6 @@ package controllers
 import (
     "net/http"
 
-    "api-go-gin/src/database"
     "api-go-gin/src/models"
     "api-go-gin/src/services"
     "github.com/gin-gonic/gin"
@@ -39,7 +38,7 @@ func ExibeTodosAlunos(context *gin.Context) {
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos/{id} [get]
 func FindById(context *gin.Context) {
-    aluno := services.FindById(context.Params.ByName("id"))
+    aluno, _ := services.FindById(context.Params.ByName("id"))
     if aluno.ID == 0 {
         context.JSON(http.StatusNotFound, gin.H{
             "Not Found": "aluno não encontrado"})
@@ -62,10 +61,10 @@ func FindById(context *gin.Context) {
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos/search/{cpf} [get]
 func FindByCpf(context *gin.Context) {
-    aluno := services.FindByCpf(context.Params.ByName("cpf"))
+    aluno, _ := services.FindByCpf(context.Params.ByName("cpf"))
     if aluno.ID == 0 {
         context.JSON(http.StatusNotFound, gin.H{
-            "Not Found": "aluno não encontrado"})
+            "Error": "Student Not Found"})
         return
     }
     context.JSON(http.StatusOK, aluno)
@@ -84,13 +83,16 @@ func FindByCpf(context *gin.Context) {
 // @Router       /alunos [post]
 func SaveAluno(context *gin.Context) {
     var aluno models.Aluno
-    //services.SaveAluno()
     if err := context.ShouldBindJSON(&aluno); err != nil {
-        context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        context.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
         return
     }
-    services.SaveAluno(aluno)
-    context.JSON(http.StatusOK, aluno)
+    message, err := services.SaveAluno(aluno)
+    if err != nil {
+        context.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+        return
+    }
+    context.JSON(http.StatusOK, gin.H{"Success": message})
 }
 
 // EditAluno godoc
@@ -108,13 +110,16 @@ func SaveAluno(context *gin.Context) {
 func EditAluno(context *gin.Context) {
     var aluno models.Aluno
     id := context.Params.ByName("id")
-    database.DB.First(&aluno, id)
     if err := context.ShouldBindJSON(&aluno); err != nil {
-        context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        context.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
         return
     }
-    database.DB.Model(&aluno).UpdateColumns(aluno)
-    context.JSON(http.StatusOK, aluno)
+    message, err := services.EditAluno(aluno, id)
+    if err != nil {
+        context.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+        return
+    }
+    context.JSON(http.StatusOK, gin.H{"Success": message})
 }
 
 // DeleteAluno godoc
@@ -130,8 +135,11 @@ func EditAluno(context *gin.Context) {
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos/{id} [delete]
 func DeleteAluno(context *gin.Context) {
-    var aluno models.Aluno
     id := context.Params.ByName("id")
-    database.DB.Delete(&aluno, id)
-    context.JSON(http.StatusOK, gin.H{"data": "aluno deletado com sucesso"})
+    message, err := services.DeleteAluno(id)
+    if err != nil {
+        context.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+        return
+    }
+    context.JSON(http.StatusOK, gin.H{"Success": message})
 }
