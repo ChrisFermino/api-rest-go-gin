@@ -21,8 +21,8 @@ import (
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos [get]
-func ExibeTodosAlunos(context *gin.Context) {
-    context.JSON(200, services.FindAll())
+func ExibeTodosAlunos(ctx *gin.Context) {
+    ctx.JSON(200, services.FindAll())
 }
 
 // FindById godoc
@@ -37,13 +37,13 @@ func ExibeTodosAlunos(context *gin.Context) {
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos/{id} [get]
-func FindById(context *gin.Context) {
-    aluno, err := services.FindById(context.Params.ByName("id"))
-    if aluno.ID == 0 {
-        context.JSON(http.StatusNotFound, gin.H{"Error": err.Error()})
+func FindById(ctx *gin.Context) {
+    a, err := services.FindById(ctx.Params.ByName("id"))
+    if a.ID == 0 {
+        ctx.JSON(http.StatusNotFound, gin.H{"Error": err.Error()})
         return
     }
-    context.JSON(http.StatusOK, aluno)
+    ctx.JSON(http.StatusOK, a)
 }
 
 // FindByCpf godoc
@@ -59,13 +59,13 @@ func FindById(context *gin.Context) {
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos/search/{cpf} [get]
-func FindByCpf(context *gin.Context) {
-    aluno, err := services.FindByCpf(context.Params.ByName("cpf"))
-    if aluno.ID == 0 {
-        context.JSON(http.StatusNotFound, gin.H{"Error": err.Error()})
+func FindByCpf(ctx *gin.Context) {
+    a, err := services.FindByCpf(ctx.Params.ByName("cpf"))
+    if a.ID == 0 {
+        ctx.JSON(http.StatusNotFound, gin.H{"Error": err.Error()})
         return
     }
-    context.JSON(http.StatusOK, aluno)
+    ctx.JSON(http.StatusOK, a)
 }
 
 // SaveAluno godoc
@@ -79,18 +79,18 @@ func FindByCpf(context *gin.Context) {
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router       /alunos [post]
-func SaveAluno(context *gin.Context) {
-    var aluno models.Aluno
-    if err := context.ShouldBindJSON(&aluno); err != nil {
-        context.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+func SaveAluno(ctx *gin.Context) {
+    var a models.Aluno
+    if err := ctx.ShouldBindJSON(&a); err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"Error": "cannot bind JSON: " + err.Error()})
         return
     }
-    message, err := services.SaveAluno(aluno)
+    msg, err := services.SaveAluno(a)
     if err != nil {
-        context.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+        ctx.JSON(http.StatusBadRequest, gin.H{"Error": "cannot save student: " + err.Error()})
         return
     }
-    context.JSON(http.StatusOK, gin.H{"Success": message})
+    ctx.JSON(http.StatusCreated, gin.H{"Success": msg})
 }
 
 // EditAluno godoc
@@ -105,19 +105,19 @@ func SaveAluno(context *gin.Context) {
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos/{id} [put]
-func EditAluno(context *gin.Context) {
-    var aluno models.Aluno
-    id := context.Params.ByName("id")
-    if err := context.ShouldBindJSON(&aluno); err != nil {
-        context.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+func EditAluno(ctx *gin.Context) {
+    var a models.Aluno
+    id := ctx.Params.ByName("id")
+    if err := ctx.ShouldBindJSON(&a); err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
         return
     }
-    message, err := services.EditAluno(aluno, id)
+    msg, err := services.EditAluno(a, id)
     if err != nil {
-        context.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+        ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
         return
     }
-    context.JSON(http.StatusOK, gin.H{"Success": message})
+    ctx.JSON(http.StatusOK, gin.H{"Success": msg})
 }
 
 // DeleteAluno godoc
@@ -132,12 +132,12 @@ func EditAluno(context *gin.Context) {
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos/{id} [delete]
-func DeleteAluno(context *gin.Context) {
-    id := context.Params.ByName("id")
-    message, err := services.DeleteAluno(id)
+func DeleteAluno(ctx *gin.Context) {
+    id := ctx.Params.ByName("id")
+    msg, err := services.DeleteAluno(id)
     if err != nil {
-        context.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+        ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
         return
     }
-    context.JSON(http.StatusOK, gin.H{"Success": message})
+    ctx.JSON(http.StatusOK, gin.H{"Success": msg})
 }

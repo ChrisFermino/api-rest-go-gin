@@ -3,6 +3,7 @@ package routes
 import (
     _ "api-go-gin/docs"
     "api-go-gin/src/controllers"
+    "api-go-gin/src/server/middlewares"
     "github.com/gin-gonic/gin"
     swaggerFiles "github.com/swaggo/files"
     ginSwagger "github.com/swaggo/gin-swagger"
@@ -13,17 +14,22 @@ func HandleRequests() {
 
     api := r.Group("/api")
     {
-        alunos := api.Group("/alunos")
+        user := api.Group("user")
+        {
+            user.POST("", controllers.SaveUser)
+        }
+        alunos := api.Group("alunos", middlewares.Auth())
         {
             alunos.GET("", controllers.ExibeTodosAlunos)
             alunos.GET(":id", controllers.FindById)
-            alunos.GET("/search/:cpf", controllers.FindByCpf)
+            alunos.GET("search/:cpf", controllers.FindByCpf)
             alunos.POST("", controllers.SaveAluno)
             alunos.PUT(":id", controllers.EditAluno)
             alunos.DELETE(":id", controllers.DeleteAluno)
         }
+        api.POST("login", controllers.Login)
     }
-    // use ginSwagger middleware to serve the API docs
+    // use ginSwagger middlewares to serve the API docs
     r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
     r.Run(":8080")
 }

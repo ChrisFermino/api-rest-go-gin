@@ -2,7 +2,7 @@ package main
 
 import (
     "api-go-gin/src/database"
-    "api-go-gin/src/routes"
+    "api-go-gin/src/server/routes"
 
     _ "api-go-gin/docs"
     _ "api-go-gin/src/controllers"
