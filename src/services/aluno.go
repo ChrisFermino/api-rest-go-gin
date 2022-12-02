@@ -22,7 +22,7 @@ func FindById(id string) (models.Aluno, error) {
 
 func FindByCpf(cpf string) (models.Aluno, error) {
     var aluno models.Aluno
-    if err := database.DB.Where("cpf LIKE ?", "%"+cpf+"%").Find(&aluno); err != nil {
+    if err := database.DB.Where("cpf LIKE ?", "%"+cpf+"%").First(&aluno); err != nil {
         return aluno, err.Error
     }
     return aluno, nil

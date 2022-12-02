@@ -38,10 +38,9 @@ func ExibeTodosAlunos(context *gin.Context) {
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos/{id} [get]
 func FindById(context *gin.Context) {
-    aluno, _ := services.FindById(context.Params.ByName("id"))
+    aluno, err := services.FindById(context.Params.ByName("id"))
     if aluno.ID == 0 {
-        context.JSON(http.StatusNotFound, gin.H{
-            "Not Found": "aluno não encontrado"})
+        context.JSON(http.StatusNotFound, gin.H{"Error": err.Error()})
         return
     }
     context.JSON(http.StatusOK, aluno)
@@ -61,10 +60,9 @@ func FindById(context *gin.Context) {
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /alunos/search/{cpf} [get]
 func FindByCpf(context *gin.Context) {
-    aluno, _ := services.FindByCpf(context.Params.ByName("cpf"))
+    aluno, err := services.FindByCpf(context.Params.ByName("cpf"))
     if aluno.ID == 0 {
-        context.JSON(http.StatusNotFound, gin.H{
-            "Error": "Student Not Found"})
+        context.JSON(http.StatusNotFound, gin.H{"Error": err.Error()})
         return
     }
     context.JSON(http.StatusOK, aluno)
